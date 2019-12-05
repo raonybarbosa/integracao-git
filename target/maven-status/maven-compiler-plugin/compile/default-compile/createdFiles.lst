@@ -1,0 +1,5 @@
+br\com\integracao\git\integracaogit\response\Response.class
+br\com\integracao\git\integracaogit\controller\GitController.class
+br\com\integracao\git\integracaogit\response\Error.class
+br\com\integracao\git\integracaogit\IntegracaogitApplication.class
+br\com\integracao\git\integracaogit\service\impl\GitService.class
