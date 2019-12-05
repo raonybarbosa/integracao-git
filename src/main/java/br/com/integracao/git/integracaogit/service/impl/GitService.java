@@ -2,11 +2,8 @@ package br.com.integracao.git.integracaogit.service.impl;
 
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
-import org.gitlab4j.api.RepositoryApi;
-import org.gitlab4j.api.models.Branch;
 import org.gitlab4j.api.models.Project;
 import org.gitlab4j.api.models.RepositoryFile;
-import org.gitlab4j.api.models.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
