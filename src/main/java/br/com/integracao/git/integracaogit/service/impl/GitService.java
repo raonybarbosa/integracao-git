@@ -2,45 +2,33 @@ package br.com.integracao.git.integracaogit.service.impl;
 
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
-import org.gitlab4j.api.Pager;
+import org.gitlab4j.api.RepositoryApi;
+import org.gitlab4j.api.models.Branch;
 import org.gitlab4j.api.models.Project;
+import org.gitlab4j.api.models.RepositoryFile;
+import org.gitlab4j.api.models.User;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class GitService {
     public String clonarRepositorio() {
+        String retorno = "Falhou";
         try {
-            GitLabApi gitLabApi = new GitLabApi("http://gitlab.raonybarbosa.com/", "XWaAtbd9M93ycAxRCWBH");
-            // Get a Pager instance so we can load all the projects into a single list, 10 items at a time:
-//            Pager<Project> projectPager = gitLabApi.getProjectApi().getProjects(1);
-//            List<Project> allProjects = projectPager.all();
-//            allProjects.forEach(System.out::println);
-            // Get a Pager instance that will page through the projects with 10 projects per page
-            Pager<Project> projectPager = gitLabApi.getProjectApi().getProjects(10);
-
-// Iterate through the pages and print out the name and description
-            while (projectPager.hasNext()) {
-                for (Project project : projectPager.next()) {
-                    System.out.println(project.getName() + " -: " + project.getDescription());
-                }
-            }
+            GitLabApi gitLabApi = GitLabApi.oauth2Login("https://gitlab.com", "raonybarbosa", "rhb242526".toCharArray());
+            //GitLabApi gitLabApi = new GitLabApi("http://gitlab.com/", "XWaAtbd9M93ycAxRCWBH");
+            //User currentUser = gitLabApi.getUserApi().getCurrentUser();
+            //retorno = currentUser.getUsername();
+            List<Project> listaProjetos = gitLabApi.getProjectApi().getOwnedProjects();
+            Project project = listaProjetos.get(0);
+            //RepositoryApi repositoryApi = gitLabApi.getRepositoryApi();
+            //List<Branch> branches = gitLabApi.getRepositoryApi().getBranches(project.getId());
+            RepositoryFile file = gitLabApi.getRepositoryFileApi().getFile(project.getId(), "Script.sql", project.getDefaultBranch());
+            retorno = file.getFilePath();
         } catch (GitLabApiException e) {
             e.printStackTrace();
         }
-//        String repoUrl = "https://gitlab.com/lipe.nscm/horus.git";
-//        String cloneDirectoryPath = "/GitLab/teste git/"; // Ex.in windows c:\\gitProjects\SpringBootMongoDbCRUD\
-//        try {
-//            System.out.println("Cloning " + repoUrl + " into " + repoUrl);
-//            Git.cloneRepository()
-//                    .setURI(repoUrl)
-//                    .setDirectory(Paths.get(cloneDirectoryPath).toFile())
-//                    .call();
-//            return "Completed Cloning";
-//        } catch (GitAPIException e) {
-//            e.printStackTrace();
-//            return "Exception occurred while cloning repo";
-//        }
-
-        return "Baixou";
+        return retorno;
     }
 }
