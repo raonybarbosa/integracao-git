@@ -1,4 +1,4 @@
-package br.com.integracao.git.integracaogit;
+package br.com.integracao.git;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,7 +1,7 @@
-package br.com.integracao.git.integracaogit.controller;
+package br.com.integracao.git.controller;
 
-import br.com.integracao.git.integracaogit.response.Response;
-import br.com.integracao.git.integracaogit.service.impl.GitService;
+import br.com.integracao.git.response.Response;
+import br.com.integracao.git.service.impl.GitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

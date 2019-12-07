@@ -1,4 +1,4 @@
-package br.com.integracao.git.integracaogit.response;
+package br.com.integracao.git.response;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
