@@ -1,6 +1,5 @@
 package br.com.integracao.git.service.impl;
 
-import br.com.integracao.git.response.RepositorioArquivo;
 import br.com.integracao.git.response.Response;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -30,10 +29,10 @@ public class RestIntegracao {
         this.restConsumer = restConsumer;
     }
 
-    public RepositorioArquivo fazerRequisicao() {
+    public Response fazerRequisicao() {
         Response responseLogger = new Response();
         String jsonRequest = gson.toJson(responseLogger);
         HttpEntity<String> requestEntity = new HttpEntity(jsonRequest, headers);
-        return restConsumer.exchange(rotaLogger, HttpMethod.GET, requestEntity, RepositorioArquivo.class).getBody();
+        return restConsumer.exchange(rotaLogger, HttpMethod.GET, requestEntity, Response.class).getBody();
     }
 }
