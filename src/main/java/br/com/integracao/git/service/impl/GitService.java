@@ -23,8 +23,8 @@ public class GitService {
     public String clonarRepositorio() {
         String retorno = "Falhou";
         try {
-            Project project = buscarProjeto("integracaoGit");
-            retorno = retornaConteudoRepositoryFile(project.getId(), project.getDefaultBranch(), "Script.sql");
+            Project project = getProjeto("integracaoGit");
+            retorno = retornarConteudoRepositoryFile(project.getId(), project.getDefaultBranch(), "Script.sql");
         } catch (GitLabApiException | IOException e) {
             e.printStackTrace();
         }
@@ -35,7 +35,7 @@ public class GitService {
         return gitLabApi.getUserApi().getCurrentUser();
     }
 
-    private RepositoryFile criarRepositoryFile(String nomeArquivo, String diretorio, String conteudo) {
+    private RepositoryFile setRepositoryFile(String nomeArquivo, String diretorio, String conteudo) {
         RepositoryFile repositoryFile = new RepositoryFile();
         repositoryFile.setFileName(nomeArquivo);
         repositoryFile.setFilePath(diretorio);
@@ -47,7 +47,7 @@ public class GitService {
         return gitLabApi.getRepositoryFileApi().getFile(idProjeto, diretorio, nomeBranch);
     }
 
-    private String retornaConteudoRepositoryFile(Integer idProjeto, String nomeBranch, String diretorio) throws GitLabApiException, IOException {
+    private String retornarConteudoRepositoryFile(Integer idProjeto, String nomeBranch, String diretorio) throws GitLabApiException, IOException {
         return IOUtils.toString(gitLabApi.getRepositoryFileApi().getRawFile(idProjeto, nomeBranch, diretorio));
     }
 
@@ -63,7 +63,7 @@ public class GitService {
         return gitLabApi.getProjectApi().createProject(projeto);
     }
 
-    private Project buscarProjeto(String nomeProjeto) throws GitLabApiException {
+    private Project getProjeto(String nomeProjeto) throws GitLabApiException {
         return gitLabApi.getProjectApi().getOwnedProjects().stream().filter(x -> x.getName().equals(nomeProjeto)).findFirst().get();
     }
 
