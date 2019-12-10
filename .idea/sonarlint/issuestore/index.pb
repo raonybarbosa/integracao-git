@@ -3,12 +3,8 @@
 pom.xml,4\4\442292b8a7efeabbe4cc176709b833b1792140ec
 D
 inf_projeto_git.json,8\1\8133e445b4c9f1d35e28856e155b70d09c104556
-s
-Csrc/main/java/br/com/integracao/git/response/CommitRepositorio.java,e\8\e84ee4f6dca5f683b058bf24ce2963d4cfe5cf59
 x
 Hsrc/main/java/br/com/integracao/git/configuration/RestConfiguration.java,a\4\a46ecd062e9ba2d52c182420c2dedfe5f10d7bb6
-t
-Dsrc/main/java/br/com/integracao/git/response/RepositorioArquivo.java,1\b\1b8bd78066742da0776f69530d058baa541d30da
 t
 Dsrc/main/java/br/com/integracao/git/service/impl/RestIntegracao.java,9\c\9cfce1f29b51996cb5736bfeb4486b79bbf4fb25
 p

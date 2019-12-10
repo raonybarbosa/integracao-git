@@ -1,51 +1,57 @@
 package br.com.integracao.git.service.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.IOUtils;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
-import org.gitlab4j.api.RepositoryApi;
 import org.gitlab4j.api.models.Branch;
 import org.gitlab4j.api.models.Project;
 import org.gitlab4j.api.models.RepositoryFile;
 import org.gitlab4j.api.models.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
 
 @Service
 public class GitService {
-    @Autowired
-    RestIntegracao restIntegracao;
+
+    GitLabApi gitLabApi;
+
+    public GitService() {
+        gitLabApi = new GitLabApi("https://gitlab.com/", "PB3pRAS1RRFzcnm3ezB3");
+    }
 
     public String clonarRepositorio() {
         String retorno = "Falhou";
         try {
-            GitLabApi gitLabApi = new GitLabApi("https://gitlab.com/", "PB3pRAS1RRFzcnm3ezB3");
-            List<Project> listaProjetos = gitLabApi.getProjectApi().getOwnedProjects();
-            Project project = listaProjetos.get(0);
-//            RepositoryApi repositoryApi = gitLabApi.getRepositoryApi();
-//            List<Branch> branches = gitLabApi.getRepositoryApi().getBranches(project.getId());
-
-//            https://gitlab.com/api/v4/projects/15661710/repository/files/Script.sql/blame?ref=master
-            RepositoryFile file = gitLabApi.getRepositoryFileApi().getFile(project.getId(), "Script.sql", project.getDefaultBranch());
-            InputStream jsonMap2 = gitLabApi.getRepositoryFileApi().getRawFile(project.getId(), project.getDefaultBranch(), "Script.sql");
-            ObjectMapper mapper = new ObjectMapper();
-            retorno = mapper.readValue(jsonMap2, String.class);
-//            retorno = retorno + " " + file.getFilePath();
+            Project project = buscarProjeto("integracaoGit");
+            retorno = retornaConteudoRepositoryFile(project.getId(), project.getDefaultBranch(), "Script.sql");
         } catch (GitLabApiException | IOException e) {
             e.printStackTrace();
         }
         return retorno;
     }
 
-    private User retornarUsuario(GitLabApi gitLabApi) throws GitLabApiException {
+    private User retornarUsuario() throws GitLabApiException {
         return gitLabApi.getUserApi().getCurrentUser();
     }
 
-    private Project criarProjetoGit(GitLabApi gitLabApi, String nomeProjeto, String descricaoProjeto) throws GitLabApiException {
+    private RepositoryFile criarRepositoryFile(String nomeArquivo, String diretorio, String conteudo) {
+        RepositoryFile repositoryFile = new RepositoryFile();
+        repositoryFile.setFileName(nomeArquivo);
+        repositoryFile.setFilePath(diretorio);
+        repositoryFile.setContent(conteudo);
+        return repositoryFile;
+    }
+
+    private RepositoryFile buscarRepositoryFile(Integer idProjeto, String diretorio, String nomeBranch) throws GitLabApiException {
+        return gitLabApi.getRepositoryFileApi().getFile(idProjeto, diretorio, nomeBranch);
+    }
+
+    private String retornaConteudoRepositoryFile(Integer idProjeto, String nomeBranch, String diretorio) throws GitLabApiException, IOException {
+        return IOUtils.toString(gitLabApi.getRepositoryFileApi().getRawFile(idProjeto, nomeBranch, diretorio));
+    }
+
+    private Project criarProjeto(String nomeProjeto, String descricaoProjeto) throws GitLabApiException {
         Project projeto = new Project()
                 .withName(nomeProjeto)
                 .withDescription(descricaoProjeto)
@@ -55,5 +61,17 @@ public class GitService {
                 .withSnippetsEnabled(true)
                 .withPublic(true);
         return gitLabApi.getProjectApi().createProject(projeto);
+    }
+
+    private Project buscarProjeto(String nomeProjeto) throws GitLabApiException {
+        return gitLabApi.getProjectApi().getOwnedProjects().stream().filter(x -> x.getName().equals(nomeProjeto)).findFirst().get();
+    }
+
+    private Branch buscarBranch(Integer idProjeto, String nomeBranch) throws GitLabApiException {
+        return gitLabApi.getRepositoryApi().getBranches(idProjeto).stream().filter(x -> x.getName().equals(nomeBranch)).findFirst().get();
+    }
+
+    private Branch criarBranch(Integer idProjeto, String nomeBranch, String nomeBranchOrigem) throws GitLabApiException {
+        return gitLabApi.getRepositoryApi().createBranch(idProjeto, nomeBranch, nomeBranchOrigem);
     }
 }
