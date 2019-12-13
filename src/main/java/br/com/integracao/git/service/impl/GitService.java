@@ -1,5 +1,7 @@
 package br.com.integracao.git.service.impl;
 
+import br.com.integracao.git.exception.NotFoundException;
+import br.com.integracao.git.request.ArquivoScript;
 import org.apache.commons.io.IOUtils;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
@@ -10,22 +12,47 @@ import org.gitlab4j.api.models.User;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Service
 public class GitService {
 
     GitLabApi gitLabApi;
+    LocalDateTime dataHora;
+    Project projeto;
+    DateTimeFormatter formatter;
 
     public GitService() {
         gitLabApi = new GitLabApi("https://gitlab.com/", "PB3pRAS1RRFzcnm3ezB3");
+        formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH-mm-ss");
+        try {
+            projeto = getProjeto("integracaoGit");
+        } catch (GitLabApiException e) {
+            e.printStackTrace();
+        }
     }
 
-    public String clonarRepositorio() {
+    public String lerConteudoArquivoGit() {
         String retorno = "Falhou";
         try {
-            Project project = getProjeto("integracaoGit");
-            retorno = retornarConteudoRepositoryFile(project.getId(), project.getDefaultBranch(), "Script.sql");
+            retorno = retornarConteudoRepositoryFile(projeto.getId(), projeto.getDefaultBranch(), "Script.sql");
         } catch (GitLabApiException | IOException e) {
+            e.printStackTrace();
+        }
+        return retorno;
+    }
+
+    public String salvarArquivoGit(ArquivoScript arquivoScript) {
+        String retorno = "Falhou";
+        try {
+            dataHora = LocalDateTime.now();
+            String agoraFormatado = dataHora.format(formatter);
+            Branch branch = this.criarBranch(projeto.getId(), "develop_" + agoraFormatado, projeto.getDefaultBranch());
+            RepositoryFile repositoryFile = this.setRepositoryFile(arquivoScript.getScripts(), "arquivo_" + agoraFormatado + ".sql", "arquivo_" + agoraFormatado + ".sql");
+            gitLabApi.getRepositoryFileApi().createFile(projeto.getId(), repositoryFile, branch.getName(), "Arquivo de teste");
+            retorno = branch.getCommit().getId();
+        } catch (GitLabApiException e) {
             e.printStackTrace();
         }
         return retorno;
@@ -64,11 +91,11 @@ public class GitService {
     }
 
     private Project getProjeto(String nomeProjeto) throws GitLabApiException {
-        return gitLabApi.getProjectApi().getOwnedProjects().stream().filter(x -> x.getName().equals(nomeProjeto)).findFirst().get();
+        return gitLabApi.getProjectApi().getOwnedProjects().stream().filter(x -> x.getName().equals(nomeProjeto)).findFirst().orElseThrow(NotFoundException::new);
     }
 
     private Branch buscarBranch(Integer idProjeto, String nomeBranch) throws GitLabApiException {
-        return gitLabApi.getRepositoryApi().getBranches(idProjeto).stream().filter(x -> x.getName().equals(nomeBranch)).findFirst().get();
+        return gitLabApi.getRepositoryApi().getBranches(idProjeto).stream().filter(x -> x.getName().equals(nomeBranch)).findFirst().orElseThrow(NotFoundException::new);
     }
 
     private Branch criarBranch(Integer idProjeto, String nomeBranch, String nomeBranchOrigem) throws GitLabApiException {
