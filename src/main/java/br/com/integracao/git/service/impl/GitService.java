@@ -49,8 +49,9 @@ public class GitService {
             dataHora = LocalDateTime.now();
             String agoraFormatado = dataHora.format(formatter);
             Branch branch = this.criarBranch(projeto.getId(), "develop_" + agoraFormatado, projeto.getDefaultBranch());
-            RepositoryFile repositoryFile = this.setRepositoryFile(arquivoScript.getScripts(), "arquivo_" + agoraFormatado + ".sql", "arquivo_" + agoraFormatado + ".sql");
+            RepositoryFile repositoryFile = this.setRepositoryFile("arquivo_" + agoraFormatado + ".sql", "arquivo_" + agoraFormatado + ".sql", arquivoScript.getScripts() + agoraFormatado);
             gitLabApi.getRepositoryFileApi().createFile(projeto.getId(), repositoryFile, branch.getName(), "Arquivo de teste");
+            //retorno = repositoryFile.getCommitId();
             retorno = branch.getCommit().getId();
         } catch (GitLabApiException e) {
             e.printStackTrace();
