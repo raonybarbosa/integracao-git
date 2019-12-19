@@ -48,10 +48,9 @@ public class GitService {
         try {
             dataHora = LocalDateTime.now();
             String agoraFormatado = dataHora.format(formatter);
-            Branch branch = this.criarBranch(projeto.getId(), "develop_" + agoraFormatado, projeto.getDefaultBranch());
+            Branch branch = this.isValid(projeto.getId(), "develope", projeto.getDefaultBranch());
             RepositoryFile repositoryFile = this.setRepositoryFile("arquivo_" + agoraFormatado + ".sql", "arquivo_" + agoraFormatado + ".sql", arquivoScript.getScripts() + agoraFormatado);
             gitLabApi.getRepositoryFileApi().createFile(projeto.getId(), repositoryFile, branch.getName(), "Arquivo de teste");
-            //retorno = repositoryFile.getCommitId();
             retorno = branch.getCommit().getId();
         } catch (GitLabApiException e) {
             e.printStackTrace();
@@ -80,7 +79,7 @@ public class GitService {
     }
 
     private Project criarProjeto(String nomeProjeto, String descricaoProjeto) throws GitLabApiException {
-        Project projeto = new Project()
+        Project project = new Project()
                 .withName(nomeProjeto)
                 .withDescription(descricaoProjeto)
                 .withIssuesEnabled(true)
@@ -88,7 +87,7 @@ public class GitService {
                 .withWikiEnabled(true)
                 .withSnippetsEnabled(true)
                 .withPublic(true);
-        return gitLabApi.getProjectApi().createProject(projeto);
+        return gitLabApi.getProjectApi().createProject(project);
     }
 
     private Project getProjeto(String nomeProjeto) throws GitLabApiException {
@@ -101,5 +100,15 @@ public class GitService {
 
     private Branch criarBranch(Integer idProjeto, String nomeBranch, String nomeBranchOrigem) throws GitLabApiException {
         return gitLabApi.getRepositoryApi().createBranch(idProjeto, nomeBranch, nomeBranchOrigem);
+    }
+
+    private Branch isValid(Integer idProject, String nomeBranch, String nomeBranchOrigem) throws GitLabApiException {
+        Branch branch;
+        try {
+            branch = this.buscarBranch(idProject, nomeBranch);
+        } catch (NotFoundException e) {
+            branch = this.criarBranch(idProject, nomeBranch, nomeBranchOrigem);
+        }
+        return branch;
     }
 }
