@@ -14,9 +14,14 @@ public class GitController {
     @Autowired
     GitService gitService;
 
+    //@GetMapping
+    //public ResponseEntity<Response> returnListAllUsers() {
+    //    return ResponseEntity.ok(new Response(gitService.lerConteudoArquivoGit()));
+    //}
+
     @GetMapping
-    public ResponseEntity<Response> returnListAllUsers() {
-        return ResponseEntity.ok(new Response(gitService.lerConteudoArquivoGit()));
+    public ResponseEntity<Response> returnMergeRequest() {
+        return ResponseEntity.ok(new Response(gitService.listMergeRequest()));
     }
 
     @PostMapping

@@ -17,12 +17,6 @@ q
 Asrc/main/java/br/com/integracao/git/controller/GitController.java,1\2\12e6e609d0830020466bbb4208251f64cc8de96b
 q
 Asrc/main/java/br/com/integracao/git/IntegracaogitApplication.java,2\2\2277a732def6fdc8560d7941c35b1a315aa397c9
-Y
-)src/main/resources/application.properties,0\6\06f65155ec73600b9fc5c4dc2883d4bb84d8e284
-]
--src/main/resources/application-dev.properties,c\3\c37467157e01027b51d4a92acec42e9af665ad9b
-]
--src/main/resources/application-hml.properties,0\a\0a96110424b1b5d599eaa519b9944ef2a821978e
 v
 Fsrc/test/java/br/com/integracao/git/IntegracaogitApplicationTests.java,a\7\a7dec3817477f6544f05944db9f69bd76605ce4f
 U
@@ -60,3 +54,9 @@ q
 Asrc/main/java/br/com/integracao/git/IntegracaoGitApplication.java,6\9\696a37188be275ec93d79dcaee1ee84f34311e0f
 n
 >src/main/java/br/com/integracao/git/request/ArquivoScript.java,1\7\1769253da7b44e24bb9fe424ef9901d8725a666d
+Å
+Qsrc/main/java/br/com/integracao/git/exception/advice/NotFoundExceptionAdvice.java,4\c\4cd86879a796e3b47bde06687f49585dc174ac92
+l
+<src/main/java/br/com/integracao/git/dto/MergeRequestDto.java,3\5\3563db268bae175113748ac430c4a0e049a6ed59
+{
+Ksrc/main/java/br/com/integracao/git/consumer/IntegracaoGitMergeRequest.java,6\2\6287479983870af55b0457142b05a6cf6c44fb66

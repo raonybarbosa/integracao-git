@@ -1,19 +1,20 @@
 package br.com.integracao.git.service.impl;
 
+import br.com.integracao.git.dto.MergeRequestDto;
 import br.com.integracao.git.exception.NotFoundException;
 import br.com.integracao.git.request.ArquivoScript;
 import org.apache.commons.io.IOUtils;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
-import org.gitlab4j.api.models.Branch;
-import org.gitlab4j.api.models.Project;
-import org.gitlab4j.api.models.RepositoryFile;
-import org.gitlab4j.api.models.User;
+import org.gitlab4j.api.models.*;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class GitService {
@@ -110,5 +111,26 @@ public class GitService {
             branch = this.criarBranch(idProject, nomeBranch, nomeBranchOrigem);
         }
         return branch;
+    }
+
+    public List<MergeRequestDto> listMergeRequest() {
+        List<MergeRequestDto> listaMergeRequestDto = new ArrayList<>();
+        ModelMapper modelMapper = new ModelMapper();
+        try {
+            for (MergeRequest mr :
+                    gitLabApi.getMergeRequestApi().getMergeRequests(15661710)) {
+                System.out.println("Id do MR            -   " + mr.getId());
+                System.out.println("Branch fonte        -   " + mr.getSourceBranch());
+                System.out.println("Branch alvo         -   " + mr.getTargetBranch());
+                System.out.println("Titulo do MR        -   " + mr.getTitle());
+                System.out.println("Descrição do MR     -   " + mr.getDescription());
+                System.out.println("Nome do autor do MR -   " + mr.getAuthor().getName());
+                System.out.println("Id do autor do MR   -   " + mr.getAuthor().getId());
+                listaMergeRequestDto.add(modelMapper.map(mr, MergeRequestDto.class));
+            }
+        } catch (GitLabApiException e) {
+            return listaMergeRequestDto;
+        }
+        return listaMergeRequestDto;
     }
 }
