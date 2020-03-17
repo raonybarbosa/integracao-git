@@ -13,4 +13,5 @@ public class MergeRequestDto {
     @JsonProperty(value = "target_branch")
     private String targetBranch;
     private String title;
+    private String description;
 }

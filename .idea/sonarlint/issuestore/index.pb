@@ -60,3 +60,5 @@ l
 <src/main/java/br/com/integracao/git/dto/MergeRequestDto.java,3\5\3563db268bae175113748ac430c4a0e049a6ed59
 {
 Ksrc/main/java/br/com/integracao/git/consumer/IntegracaoGitMergeRequest.java,6\2\6287479983870af55b0457142b05a6cf6c44fb66
+s
+Csrc/main/java/br/com/integracao/git/dto/MergeRequestRetornoDto.java,a\3\a317e2574a62ddfbad8939adc2982b6595e71796

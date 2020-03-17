@@ -1,6 +1,8 @@
 package br.com.integracao.git.service.impl;
 
+import br.com.integracao.git.consumer.IntegracaoGitMergeRequest;
 import br.com.integracao.git.dto.MergeRequestDto;
+import br.com.integracao.git.dto.MergeRequestRetornoDto;
 import br.com.integracao.git.exception.NotFoundException;
 import br.com.integracao.git.request.ArquivoScript;
 import org.apache.commons.io.IOUtils;
@@ -8,6 +10,8 @@ import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.*;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -23,6 +27,10 @@ public class GitService {
     LocalDateTime dataHora;
     Project projeto;
     DateTimeFormatter formatter;
+    @Autowired
+    IntegracaoGitMergeRequest integracaoGitMergeRequest;
+    @Value("${git.token}")
+    String tokenGit;
 
     public GitService() {
         gitLabApi = new GitLabApi("https://gitlab.com/", "PB3pRAS1RRFzcnm3ezB3");
@@ -117,6 +125,13 @@ public class GitService {
         List<MergeRequestDto> listaMergeRequestDto = new ArrayList<>();
         ModelMapper modelMapper = new ModelMapper();
         try {
+            System.out.println("Token               -   " + gitLabApi.getAuthToken());
+            System.out.println("-----------------------------------------");
+            for (Tag tag : gitLabApi.getTagsApi().getTags(15661710)) {
+                System.out.println("Nome da tag     -   " + tag.getName());
+                System.out.println("Mensagem da tag -   " + tag.getMessage());
+            }
+            System.out.println("-----------------------------------------");
             for (MergeRequest mr :
                     gitLabApi.getMergeRequestApi().getMergeRequests(15661710)) {
                 System.out.println("Id do MR            -   " + mr.getId());
@@ -132,5 +147,9 @@ public class GitService {
             return listaMergeRequestDto;
         }
         return listaMergeRequestDto;
+    }
+
+    public MergeRequestRetornoDto createMergeRequest(MergeRequestDto mergeRequestDto) {
+        return integracaoGitMergeRequest.criarMergeRequest(15661710, tokenGit, mergeRequestDto);
     }
 }
