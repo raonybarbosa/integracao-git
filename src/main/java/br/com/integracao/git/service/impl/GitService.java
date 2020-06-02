@@ -1,6 +1,8 @@
 package br.com.integracao.git.service.impl;
 
-import br.com.integracao.git.consumer.IntegracaoGitMergeRequest;
+import br.com.integracao.git.component.RestIntegracao;
+import br.com.integracao.git.consumer.IntegracaoGit;
+import br.com.integracao.git.dto.FileGit;
 import br.com.integracao.git.dto.MergeRequestDto;
 import br.com.integracao.git.dto.MergeRequestRetornoDto;
 import br.com.integracao.git.exception.NotFoundException;
@@ -15,6 +17,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -28,9 +32,11 @@ public class GitService {
     Project projeto;
     DateTimeFormatter formatter;
     @Autowired
-    IntegracaoGitMergeRequest integracaoGitMergeRequest;
+    IntegracaoGit integracaoGit;
     @Value("${git.token}")
     String tokenGit;
+    @Autowired
+    RestIntegracao restIntegracao;
 
     public GitService() {
         gitLabApi = new GitLabApi("https://gitlab.com/", "PB3pRAS1RRFzcnm3ezB3");
@@ -150,6 +156,14 @@ public class GitService {
     }
 
     public MergeRequestRetornoDto createMergeRequest(MergeRequestDto mergeRequestDto) {
-        return integracaoGitMergeRequest.criarMergeRequest(15661710, tokenGit, mergeRequestDto);
+        return integracaoGit.criarMergeRequest(tokenGit, 15661710, mergeRequestDto);
+    }
+
+    public FileGit lerArquivo() {
+        return restIntegracao.fazerRequisicao2();
+    }
+
+    public FileGit lerArquivo2() throws UnsupportedEncodingException {
+        return integracaoGit.lerArquivo(tokenGit, 15661710, URLEncoder.encode("DDL/arquivo_02-01-2020-09-48-30.sql", "UTF-8"), "develop");
     }
 }

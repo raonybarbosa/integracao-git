@@ -1,5 +1,6 @@
-package br.com.integracao.git.service.impl;
+package br.com.integracao.git.component;
 
+import br.com.integracao.git.dto.FileGit;
 import br.com.integracao.git.response.Response;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -8,10 +9,10 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-@Service
+@Component
 public class RestIntegracao {
 
     @Value("https://gitlab.com/api/v4/projects/15661710/repository/files/Script.sql/blame?ref=master")
@@ -35,4 +36,12 @@ public class RestIntegracao {
         HttpEntity<String> requestEntity = new HttpEntity(jsonRequest, headers);
         return restConsumer.exchange(rotaLogger, HttpMethod.GET, requestEntity, Response.class).getBody();
     }
+
+    public FileGit fazerRequisicao2() {
+        FileGit responseLogger = new FileGit();
+        String jsonRequest = gson.toJson(responseLogger);
+        HttpEntity<String> requestEntity = new HttpEntity(jsonRequest, headers);
+        return restConsumer.exchange("https://gitlab.com/api/v4/projects/15661710/repository/files/DDL%2Farquivo_02-01-2020-09-48-30.sql?ref=develop", HttpMethod.GET, requestEntity, FileGit.class).getBody();
+    }
+    //String string = URLEncoder.encode("teste/teste.sb");
 }

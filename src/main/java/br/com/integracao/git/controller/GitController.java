@@ -1,13 +1,13 @@
 package br.com.integracao.git.controller;
 
 import br.com.integracao.git.dto.MergeRequestDto;
-import br.com.integracao.git.request.ArquivoScript;
 import br.com.integracao.git.response.Response;
 import br.com.integracao.git.service.impl.GitService;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.UnsupportedEncodingException;
 
 @RestController
 @RequestMapping("/git")
@@ -20,10 +20,10 @@ public class GitController {
     //    return ResponseEntity.ok(new Response(gitService.lerConteudoArquivoGit()));
     //}
 
-    //@GetMapping
-    //public ResponseEntity<Response> returnMergeRequest() {
-    //    return ResponseEntity.ok(new Response(gitService.listMergeRequest()));
-    //}
+    @GetMapping
+    public ResponseEntity<Response> returnMergeRequest() throws UnsupportedEncodingException {
+        return ResponseEntity.ok(new Response(gitService.lerArquivo2()));
+    }
 
     @PostMapping
     public ResponseEntity<Response> returnMergeRequest(@RequestBody MergeRequestDto mergeRequestDto) {

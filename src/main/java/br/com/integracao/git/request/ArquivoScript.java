@@ -8,6 +8,15 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class ArquivoScript {
+
     private String scripts;
+
+    public String getScripts() {
+        return scripts;
+    }
+
+    public void setScripts(String scripts) {
+        this.scripts = scripts;
+    }
 
 }
