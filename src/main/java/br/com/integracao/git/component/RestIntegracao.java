@@ -1,7 +1,6 @@
 package br.com.integracao.git.component;
 
 import br.com.integracao.git.dto.FileGit;
-import br.com.integracao.git.response.Response;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,48 +11,34 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Component
 public class RestIntegracao {
 
-    @Value("${git.url.api}15661710/repository/files/Script.sql/blame?ref=master")
-    private String rotaLogger;
+    private final HttpHeaders headers;
+    private final Gson gson;
+    private final RestTemplate restConsumer;
+    @Value("${git.url.api}" + "${git.projeto.id}/repository/files/")
+    private String urlGitLab;
 
-    private HttpHeaders headers;
-    private Gson gson;
-    private RestTemplate restConsumer;
-
-    public RestIntegracao(@Qualifier("restTemplate") RestTemplate restConsumer) {
+    public RestIntegracao(@Qualifier("restTemplate") RestTemplate restConsumer, @Value("${git.token}") String tokenGit) {
         this.headers = new HttpHeaders();
         this.headers.setContentType(MediaType.APPLICATION_JSON);
-        this.headers.set("private-token", "PB3pRAS1RRFzcnm3ezB3");
+        this.headers.set("private-token", tokenGit);
         this.gson = new Gson();
         this.restConsumer = restConsumer;
     }
 
-    public Response fazerRequisicao() {
-        Response responseLogger = new Response();
-        String jsonRequest = gson.toJson(responseLogger);
-        HttpEntity<String> requestEntity = new HttpEntity(jsonRequest, headers);
-        return restConsumer.exchange(rotaLogger, HttpMethod.GET, requestEntity, Response.class).getBody();
+    public FileGit fazerRequisicao(String diretorioArquivo, String branch) {
+        HttpEntity<String> requestEntity = new HttpEntity(gson.toJson(new FileGit()), headers);
+        return restConsumer.exchange(this.montarUrlGitLab(diretorioArquivo, branch), HttpMethod.GET, requestEntity,
+                FileGit.class).getBody();
     }
 
-    public String fazerRequisicao2() {
-        FileGit fileGit = new FileGit();
-        String jsonRequest = gson.toJson(fileGit);
-        HttpEntity<String> requestEntity = new HttpEntity(jsonRequest, headers);
-        Map<String, String> vars = new HashMap<>();
-        vars.put("id", "15661710");
-        //vars.put("arquivo", "DDL/arquivo_02-01-2020-09-48-30.sql");
-        vars.put("arquivo", "DDL%2Farquivo_02-01-2020-09-48-30.sql");
-        vars.put("brach", "develop");
-        //https://gitlab.com/api/v4/projects/{id}/repository/files/DDL%2Farquivo_02-01-2020-09-48-30.sql?ref=develop
-        //https://gitlab.com/raonybarbosa/integracaogit/-/raw/develop/DDL/arquivo_02-01-2020-09-48-30.sql?inline=false
-        //https://gitlab.com/api/v4/projects/{id}/repository/files/{arquivo}?ref={brach}
-        //return restConsumer.getForObject("https://gitlab.com/raonybarbosa/integracaogit/-/raw/develop/DDL/arquivo_02-01-2020-09-48-30.sql?inline=false",
-        //        FileGit.class);
-        return restConsumer.exchange("https://gitlab.com/raonybarbosa/integracaogit/-/raw/develop/DDL/arquivo_02-01-2020-09-48-30.sql?inline=false", HttpMethod.GET, requestEntity, String.class).getBody();
+    public FileGit fazerRequisicao2(String diretorioArquivo, String branch) {
+        return restConsumer.getForObject(this.montarUrlGitLab(diretorioArquivo, branch), FileGit.class);
+    }
+
+    private String montarUrlGitLab(String diretorioArquivo, String branch) {
+        return urlGitLab + diretorioArquivo + "/?ref=" + branch;
     }
 }

@@ -1,8 +1,10 @@
 package br.com.integracao.git.controller;
 
+import br.com.integracao.git.dto.FileGit;
 import br.com.integracao.git.dto.MergeRequestDto;
-import br.com.integracao.git.response.Response;
+import br.com.integracao.git.dto.MergeRequestRetornoDto;
 import br.com.integracao.git.service.impl.GitLab4JService;
+import br.com.integracao.git.service.impl.GitLabApiRestService;
 import br.com.integracao.git.service.impl.GitLabApiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,29 +17,22 @@ import java.io.UnsupportedEncodingException;
 @RequiredArgsConstructor
 public class GitController {
 
-    private final GitLabApiService gitLabApiService;
     private final GitLab4JService gitLab4JService;
+    private final GitLabApiService gitLabApiService;
+    private final GitLabApiRestService gitLabApiRestService;
 
-    //@GetMapping
-    //public ResponseEntity<Response> returnListAllUsers() {
-    //    return ResponseEntity.ok(new Response(gitService.lerConteudoArquivoGit()));
-    //}
+    @GetMapping("/feign")
+    public ResponseEntity<FileGit> lerArquivo() throws UnsupportedEncodingException {
+        return ResponseEntity.ok(gitLabApiService.lerArquivo());
+    }
 
-    @GetMapping
-    public ResponseEntity<Response> returnMergeRequest() throws UnsupportedEncodingException {
-        //return ResponseEntity.ok(new Response(gitLabApiService.lerArquivo2()));
-        return ResponseEntity.ok(new Response(gitLabApiService.lerArquivo()));
+    @GetMapping("/rest")
+    public ResponseEntity<FileGit> lerArquivo2() throws UnsupportedEncodingException {
+        return ResponseEntity.ok(gitLabApiRestService.lerArquivo2());
     }
 
     @PostMapping
-    public ResponseEntity<Response> returnMergeRequest(@RequestBody MergeRequestDto mergeRequestDto) {
-        return ResponseEntity.ok(new Response(gitLabApiService.createMergeRequest(mergeRequestDto)));
+    public ResponseEntity<MergeRequestRetornoDto> returnMergeRequest(@RequestBody MergeRequestDto mergeRequestDto) {
+        return ResponseEntity.ok(gitLabApiService.createMergeRequest(mergeRequestDto));
     }
-
-    /*@PostMapping
-    public ResponseEntity<Response> salvarArquivoGit(@RequestBody Response response) {
-        ModelMapper modelMapper = new ModelMapper();
-        ArquivoScript arquivoScript = modelMapper.map(response.getData(), ArquivoScript.class);
-        return ResponseEntity.ok(new Response(gitService.salvarArquivoGit(arquivoScript)));
-    }*/
 }

@@ -1,6 +1,5 @@
 package br.com.integracao.git.service.impl;
 
-import br.com.integracao.git.component.RestIntegracao;
 import br.com.integracao.git.consumer.IntegracaoGit;
 import br.com.integracao.git.dto.FileGit;
 import br.com.integracao.git.dto.MergeRequestDto;
@@ -17,19 +16,16 @@ import java.net.URLEncoder;
 public class GitLabApiService {
 
     private final IntegracaoGit integracaoGit;
-    private final RestIntegracao restIntegracao;
     @Value("${git.token}")
     String tokenGit;
+    @Value("${git.projeto.id}")
+    int idProjeto;
 
     public MergeRequestRetornoDto createMergeRequest(MergeRequestDto mergeRequestDto) {
-        return integracaoGit.criarMergeRequest(tokenGit, 15661710, mergeRequestDto);
+        return integracaoGit.criarMergeRequest(tokenGit, idProjeto, mergeRequestDto);
     }
 
     public FileGit lerArquivo() throws UnsupportedEncodingException {
-        return integracaoGit.lerArquivo(tokenGit, 15661710, URLEncoder.encode("DDL/arquivo_02-01-2020-09-48-30.sql", "UTF-8"), "develop");
-    }
-
-    public String lerArquivo2() {
-        return restIntegracao.fazerRequisicao2();
+        return integracaoGit.lerArquivo(tokenGit, idProjeto, URLEncoder.encode("DDL/arquivo_02-01-2020-09-48-30.sql", "UTF-8"), "develop");
     }
 }

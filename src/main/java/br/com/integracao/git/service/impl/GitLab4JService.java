@@ -35,10 +35,11 @@ public class GitLab4JService {
     @Autowired
     RestIntegracao restIntegracao;
 
-    public GitLab4JService(@Value("${git.token}") String tokenGit, @Value("${git.url}") String url, @Value("${git.nomeprojeto}") String nomeProjeto) throws GitLabApiException {
+    public GitLab4JService(@Value("${git.token}") String tokenGit, @Value("${git.url}") String url,
+                           @Value("${git.projeto.nome}") String nomeProjeto) throws GitLabApiException {
         gitLabApi = new GitLabApi(url, tokenGit);
         formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH-mm-ss");
-        projeto = this.getProjeto(nomeProjeto);
+        projeto = getProjeto(nomeProjeto);
     }
 
     public String lerConteudoArquivoGit() {
@@ -55,7 +56,8 @@ public class GitLab4JService {
         dataHora = LocalDateTime.now();
         String agoraFormatado = dataHora.format(formatter);
         Branch branch = this.isValid(projeto.getId(), "develope", projeto.getDefaultBranch());
-        RepositoryFile repositoryFile = this.setRepositoryFile("arquivo_" + agoraFormatado + ".sql", "arquivo_" + agoraFormatado + ".sql", arquivoScript.getScripts() + agoraFormatado);
+        RepositoryFile repositoryFile = this.setRepositoryFile("arquivo_" + agoraFormatado + ".sql",
+                "arquivo_" + agoraFormatado + ".sql", arquivoScript.getScripts() + agoraFormatado);
         gitLabApi.getRepositoryFileApi().createFile(projeto.getId(), repositoryFile, branch.getName(), "Arquivo de teste");
         retorno = branch.getCommit().getId();
         return retorno;

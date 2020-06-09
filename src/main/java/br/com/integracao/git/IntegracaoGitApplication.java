@@ -11,5 +11,4 @@ public class IntegracaoGitApplication {
     public static void main(String[] args) {
         SpringApplication.run(IntegracaoGitApplication.class, args);
     }
-
 }
