@@ -10,13 +10,4 @@ import lombok.Setter;
 public class ArquivoScript {
 
     private String scripts;
-
-    public String getScripts() {
-        return scripts;
-    }
-
-    public void setScripts(String scripts) {
-        this.scripts = scripts;
-    }
-
 }

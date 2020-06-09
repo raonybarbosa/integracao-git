@@ -2,30 +2,29 @@ package br.com.integracao.git.service.impl;
 
 import br.com.integracao.git.component.RestIntegracao;
 import br.com.integracao.git.consumer.IntegracaoGit;
-import br.com.integracao.git.dto.FileGit;
 import br.com.integracao.git.dto.MergeRequestDto;
-import br.com.integracao.git.dto.MergeRequestRetornoDto;
 import br.com.integracao.git.exception.NotFoundException;
 import br.com.integracao.git.request.ArquivoScript;
 import org.apache.commons.io.IOUtils;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
-import org.gitlab4j.api.models.*;
+import org.gitlab4j.api.models.Branch;
+import org.gitlab4j.api.models.Project;
+import org.gitlab4j.api.models.RepositoryFile;
+import org.gitlab4j.api.models.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class GitService {
+public class GitLab4JService {
 
     GitLabApi gitLabApi;
     LocalDateTime dataHora;
@@ -33,43 +32,32 @@ public class GitService {
     DateTimeFormatter formatter;
     @Autowired
     IntegracaoGit integracaoGit;
-    @Value("${git.token}")
-    String tokenGit;
     @Autowired
     RestIntegracao restIntegracao;
 
-    public GitService() {
-        gitLabApi = new GitLabApi("https://gitlab.com/", "PB3pRAS1RRFzcnm3ezB3");
+    public GitLab4JService(@Value("${git.token}") String tokenGit, @Value("${git.url}") String url, @Value("${git.nomeprojeto}") String nomeProjeto) throws GitLabApiException {
+        gitLabApi = new GitLabApi(url, tokenGit);
         formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH-mm-ss");
-        try {
-            projeto = getProjeto("integracaoGit");
-        } catch (GitLabApiException e) {
-            e.printStackTrace();
-        }
+        projeto = this.getProjeto(nomeProjeto);
     }
 
     public String lerConteudoArquivoGit() {
-        String retorno = "Falhou";
         try {
-            retorno = retornarConteudoRepositoryFile(projeto.getId(), projeto.getDefaultBranch(), "Script.sql");
+            return retornarConteudoRepositoryFile(projeto.getId(), projeto.getDefaultBranch(), "Script.sql");
         } catch (GitLabApiException | IOException e) {
-            e.printStackTrace();
+            throw new NotFoundException();
         }
-        return retorno;
     }
 
-    public String salvarArquivoGit(ArquivoScript arquivoScript) {
+    public String salvarArquivoGit(ArquivoScript arquivoScript) throws GitLabApiException {
         String retorno = "Falhou";
-        try {
-            dataHora = LocalDateTime.now();
-            String agoraFormatado = dataHora.format(formatter);
-            Branch branch = this.isValid(projeto.getId(), "develope", projeto.getDefaultBranch());
-            RepositoryFile repositoryFile = this.setRepositoryFile("arquivo_" + agoraFormatado + ".sql", "arquivo_" + agoraFormatado + ".sql", arquivoScript.getScripts() + agoraFormatado);
-            gitLabApi.getRepositoryFileApi().createFile(projeto.getId(), repositoryFile, branch.getName(), "Arquivo de teste");
-            retorno = branch.getCommit().getId();
-        } catch (GitLabApiException e) {
-            e.printStackTrace();
-        }
+
+        dataHora = LocalDateTime.now();
+        String agoraFormatado = dataHora.format(formatter);
+        Branch branch = this.isValid(projeto.getId(), "develope", projeto.getDefaultBranch());
+        RepositoryFile repositoryFile = this.setRepositoryFile("arquivo_" + agoraFormatado + ".sql", "arquivo_" + agoraFormatado + ".sql", arquivoScript.getScripts() + agoraFormatado);
+        gitLabApi.getRepositoryFileApi().createFile(projeto.getId(), repositoryFile, branch.getName(), "Arquivo de teste");
+        retorno = branch.getCommit().getId();
         return retorno;
     }
 
@@ -133,37 +121,24 @@ public class GitService {
         try {
             System.out.println("Token               -   " + gitLabApi.getAuthToken());
             System.out.println("-----------------------------------------");
-            for (Tag tag : gitLabApi.getTagsApi().getTags(15661710)) {
+            gitLabApi.getTagsApi().getTags(15661710).forEach(tag -> {
                 System.out.println("Nome da tag     -   " + tag.getName());
                 System.out.println("Mensagem da tag -   " + tag.getMessage());
-            }
+            });
             System.out.println("-----------------------------------------");
-            for (MergeRequest mr :
-                    gitLabApi.getMergeRequestApi().getMergeRequests(15661710)) {
-                System.out.println("Id do MR            -   " + mr.getId());
-                System.out.println("Branch fonte        -   " + mr.getSourceBranch());
-                System.out.println("Branch alvo         -   " + mr.getTargetBranch());
-                System.out.println("Titulo do MR        -   " + mr.getTitle());
-                System.out.println("Descrição do MR     -   " + mr.getDescription());
-                System.out.println("Nome do autor do MR -   " + mr.getAuthor().getName());
-                System.out.println("Id do autor do MR   -   " + mr.getAuthor().getId());
-                listaMergeRequestDto.add(modelMapper.map(mr, MergeRequestDto.class));
-            }
+            gitLabApi.getMergeRequestApi().getMergeRequests(15661710).forEach(mergeRequest -> {
+                System.out.println("Id do MR            -   " + mergeRequest.getId());
+                System.out.println("Branch fonte        -   " + mergeRequest.getSourceBranch());
+                System.out.println("Branch alvo         -   " + mergeRequest.getTargetBranch());
+                System.out.println("Titulo do MR        -   " + mergeRequest.getTitle());
+                System.out.println("Descrição do MR     -   " + mergeRequest.getDescription());
+                System.out.println("Nome do autor do MR -   " + mergeRequest.getAuthor().getName());
+                System.out.println("Id do autor do MR   -   " + mergeRequest.getAuthor().getId());
+                listaMergeRequestDto.add(modelMapper.map(mergeRequest, MergeRequestDto.class));
+            });
         } catch (GitLabApiException e) {
             return listaMergeRequestDto;
         }
         return listaMergeRequestDto;
-    }
-
-    public MergeRequestRetornoDto createMergeRequest(MergeRequestDto mergeRequestDto) {
-        return integracaoGit.criarMergeRequest(tokenGit, 15661710, mergeRequestDto);
-    }
-
-    public FileGit lerArquivo() {
-        return restIntegracao.fazerRequisicao2();
-    }
-
-    public FileGit lerArquivo2() throws UnsupportedEncodingException {
-        return integracaoGit.lerArquivo(tokenGit, 15661710, URLEncoder.encode("DDL/arquivo_02-01-2020-09-48-30.sql", "UTF-8"), "develop");
     }
 }

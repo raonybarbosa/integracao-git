@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 
-@FeignClient(url = "${link.git.create.merge.request}", name = "git")
+@FeignClient(url = "${git.url.api}", name = "git")
 public interface IntegracaoGit {
     @PostMapping(value = "/{identificador}/merge_requests")
     MergeRequestRetornoDto criarMergeRequest(@RequestHeader("private-token") String token, @PathVariable("identificador") int identificador, MergeRequestDto mergeRequestDto);
