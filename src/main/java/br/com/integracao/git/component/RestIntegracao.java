@@ -34,10 +34,6 @@ public class RestIntegracao {
                 FileGit.class).getBody();
     }
 
-    public FileGit fazerRequisicao2(String diretorioArquivo, String branch) {
-        return restConsumer.getForObject(this.montarUrlGitLab(diretorioArquivo, branch), FileGit.class);
-    }
-
     private String montarUrlGitLab(String diretorioArquivo, String branch) {
         return urlGitLab + diretorioArquivo + "/?ref=" + branch;
     }

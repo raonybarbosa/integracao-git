@@ -19,6 +19,6 @@ public class GitLabApiRestService {
     }
 
     public FileGit lerArquivo2() throws UnsupportedEncodingException {
-        return restIntegracao.fazerRequisicao2(URLEncoder.encode("arquivo_02-01-2020-09-48-41.sql", "UTF-8"), "develop");
+        return restIntegracao.fazerRequisicao(URLEncoder.encode("arquivo_02-01-2020-09-48-41.sql", "UTF-8"), "develop");
     }
 }

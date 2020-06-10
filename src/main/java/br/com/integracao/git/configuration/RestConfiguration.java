@@ -10,7 +10,6 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 import javax.net.ssl.SSLContext;
-import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -31,8 +30,12 @@ public class RestConfiguration {
                 .build();
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
         requestFactory.setHttpClient(httpClient);
-
-        RestTemplate restTemplate = new RestTemplate(requestFactory);
-        return restTemplate;
+        return new RestTemplate(requestFactory);
     }
+    /*
+       CloseableHttpClient httpClient = HttpClients.custom().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
+    HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+    requestFactory.setHttpClient(httpClient);
+    return new RestTemplate(requestFactory);
+     */
 }
