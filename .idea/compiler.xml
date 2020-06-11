@@ -7,16 +7,16 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="integracaogit" />
+        <module name="integracao-git" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="integracaogit" target="1.8" />
+      <module name="integracao-git" target="1.8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="integracaogit" options="-parameters" />
+      <module name="integracao-git" options="-parameters" />
     </option>
   </component>
 </project>

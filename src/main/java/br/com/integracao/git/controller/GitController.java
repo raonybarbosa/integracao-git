@@ -31,6 +31,11 @@ public class GitController {
         return ResponseEntity.ok(gitLabApiRestService.lerArquivo2());
     }
 
+    @GetMapping("/raw")
+    public ResponseEntity<String> lerArquivo3() {
+        return ResponseEntity.ok(gitLabApiRestService.lerArquivo());
+    }
+
     @PostMapping
     public ResponseEntity<MergeRequestRetornoDto> returnMergeRequest(@RequestBody MergeRequestDto mergeRequestDto) {
         return ResponseEntity.ok(gitLabApiService.createMergeRequest(mergeRequestDto));

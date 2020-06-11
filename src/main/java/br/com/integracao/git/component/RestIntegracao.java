@@ -34,6 +34,12 @@ public class RestIntegracao {
                 FileGit.class).getBody();
     }
 
+    public String fazerRequisicao(String diretorioArquivo) {
+        HttpEntity<String> requestEntity = new HttpEntity(gson.toJson(new String()), headers);
+        return restConsumer.exchange(diretorioArquivo, HttpMethod.GET, requestEntity,
+                String.class).getBody();
+    }
+
     private String montarUrlGitLab(String diretorioArquivo, String branch) {
         return urlGitLab + diretorioArquivo + "/?ref=" + branch;
     }

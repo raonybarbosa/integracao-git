@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>br.com.integracao.git</groupId>
-    <artifactId>integracaogit</artifactId>
+    <artifactId>integracao-git</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>integracaogit</name>
+    <name>integracao-git</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>
@@ -43,10 +43,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
         <dependency>
             <groupId>javax.validation</groupId>
