@@ -29,12 +29,12 @@ public class GitController {
         return ResponseEntity.ok(gitLabApiRestService.lerArquivo2());
     }
 
-    @PostMapping("/mergerequest")
+    @PostMapping("/feign/mergerequest")
     public ResponseEntity returnMergeRequest(@RequestBody MergeRequestDto mergeRequestDto) {
         return ResponseEntity.ok(gitLabApiService.createMergeRequest(mergeRequestDto));
     }
 
-    @PostMapping("/gravararquivo")
+    @PostMapping("/feign/gravararquivo")
     public ResponseEntity gravarArquivoFeign(@RequestBody @Valid FileGit fileGit) throws UnsupportedEncodingException {
         return ResponseEntity.ok(gitLabApiService.gravarArquivo(fileGit));
     }
